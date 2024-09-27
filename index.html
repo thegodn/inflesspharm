@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eczanelerimiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background-color: #ffffff;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #fff;
+            width: 100%;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
         }
         h1 {
             text-align: center;
@@ -32,6 +30,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
         }
         .search-container select {
             width: 30%;
@@ -66,7 +65,7 @@
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onselectstart="return false;" unselectable="on">
     <div class="container">
         <h1>Eczanelerimiz</h1>
         <div class="search-container">
@@ -76,10 +75,6 @@
             </select>
             <select id="ilce-select">
                 <option value="">İlçe seçerek ara...</option>
-                <option value="aladag">Aladağ</option>
-                <option value="cukurova">Çukurova</option>
-                <option value="kozan">Kozan</option>
-                <option value="saricam">Sarıçam</option>
             </select>
             <input type="text" id="kelime-ara" placeholder="Kelime ile ara...">
         </div>
@@ -116,7 +111,7 @@
                 const eczaneDiv = document.createElement('div');
                 eczaneDiv.className = 'eczane-item';
                 eczaneDiv.innerHTML = `
-                    <img src="/api/placeholder/50/50" alt="Eczane ikonu">
+                    <img src="https://i.hizliresim.com/rxf95n9.png" alt="Eczane ikonu">
                     <h3>${eczane.ad}</h3>
                     <p>${eczane.sehir} / ${eczane.ilce}</p>
                 `;
@@ -138,12 +133,36 @@
             eczaneleriGoster(filtrelenmisEczaneler);
         }
 
-        document.getElementById('sehir-select').addEventListener('change', eczaneleriFiltrele);
+        function ilceleriDoldur() {
+            const sehir = document.getElementById('sehir-select').value;
+            const ilceSelect = document.getElementById('ilce-select');
+            ilceSelect.innerHTML = '<option value="">İlçe seçerek ara...</option>';
+
+            if (sehir === 'adana') {
+                const ilceler = ['Aladağ', 'Çukurova', 'Kozan', 'Sarıçam'];
+                ilceler.forEach(ilce => {
+                    const option = document.createElement('option');
+                    option.value = ilce.toLowerCase();
+                    option.textContent = ilce;
+                    ilceSelect.appendChild(option);
+                });
+            }
+        }
+
+        document.getElementById('sehir-select').addEventListener('change', () => {
+            ilceleriDoldur();
+            eczaneleriFiltrele();
+        });
         document.getElementById('ilce-select').addEventListener('change', eczaneleriFiltrele);
         document.getElementById('kelime-ara').addEventListener('input', eczaneleriFiltrele);
 
-        // Sayfa yüklendiğinde tüm eczaneleri göster
+        // Sayfa yüklendiğinde ilçeleri doldur ve tüm eczaneleri göster
+        ilceleriDoldur();
         eczaneleriGoster(eczaneler);
+
+        // Sağ tıklama ve metin seçimini engelle
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('selectstart', event => event.preventDefault());
     </script>
 </body>
 </html>
