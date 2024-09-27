@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eczanelerimiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .search-container select, .search-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-container select {
+            width: 30%;
+        }
+        .search-container input {
+            width: 35%;
+        }
+        .eczane-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .eczane-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+        }
+        .eczane-item img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        .eczane-item h3 {
+            margin: 0;
+            color: #333;
+        }
+        .eczane-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Eczanelerimiz</h1>
+        <div class="search-container">
+            <select id="sehir-select">
+                <option value="">Şehir seçerek ara...</option>
+                <option value="adana">Adana</option>
+            </select>
+            <select id="ilce-select">
+                <option value="">İlçe seçerek ara...</option>
+                <option value="aladag">Aladağ</option>
+                <option value="cukurova">Çukurova</option>
+                <option value="kozan">Kozan</option>
+                <option value="saricam">Sarıçam</option>
+            </select>
+            <input type="text" id="kelime-ara" placeholder="Kelime ile ara...">
+        </div>
+        <div class="eczane-list" id="eczane-listesi">
+            <!-- Eczaneler burada dinamik olarak oluşturulacak -->
+        </div>
+    </div>
+
+    <script>
+        const eczaneler = [
+            { ad: "Eczane1", sehir: "Adana", ilce: "Aladağ" },
+            { ad: "Eczane2", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane3", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane4", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane5", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane6", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane7", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane8", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane9", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane10", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane11", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane12", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane13", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane14", sehir: "Adana", ilce: "Çukurova" },
+            { ad: "Eczane15", sehir: "Adana", ilce: "Kozan" },
+            { ad: "Eczane16", sehir: "Adana", ilce: "Kozan" },
+            { ad: "Eczane17", sehir: "Adana", ilce: "Sarıçam" },
+        ];
+
+        function eczaneleriGoster(eczaneListesi) {
+            const eczaneContainer = document.getElementById('eczane-listesi');
+            eczaneContainer.innerHTML = '';
+            eczaneListesi.forEach(eczane => {
+                const eczaneDiv = document.createElement('div');
+                eczaneDiv.className = 'eczane-item';
+                eczaneDiv.innerHTML = `
+                    <img src="/api/placeholder/50/50" alt="Eczane ikonu">
+                    <h3>${eczane.ad}</h3>
+                    <p>${eczane.sehir} / ${eczane.ilce}</p>
+                `;
+                eczaneContainer.appendChild(eczaneDiv);
+            });
+        }
+
+        function eczaneleriFiltrele() {
+            const sehir = document.getElementById('sehir-select').value.toLowerCase();
+            const ilce = document.getElementById('ilce-select').value.toLowerCase();
+            const kelime = document.getElementById('kelime-ara').value.toLowerCase();
+
+            const filtrelenmisEczaneler = eczaneler.filter(eczane => 
+                (sehir === '' || eczane.sehir.toLowerCase() === sehir) &&
+                (ilce === '' || eczane.ilce.toLowerCase() === ilce) &&
+                (kelime === '' || eczane.ad.toLowerCase().includes(kelime))
+            );
+
+            eczaneleriGoster(filtrelenmisEczaneler);
+        }
+
+        document.getElementById('sehir-select').addEventListener('change', eczaneleriFiltrele);
+        document.getElementById('ilce-select').addEventListener('change', eczaneleriFiltrele);
+        document.getElementById('kelime-ara').addEventListener('input', eczaneleriFiltrele);
+
+        // Sayfa yüklendiğinde tüm eczaneleri göster
+        eczaneleriGoster(eczaneler);
+    </script>
+</body>
+</html>
